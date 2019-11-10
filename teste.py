@@ -6,10 +6,13 @@ import os
 
 import sklearn
 from sklearn.datasets import load_iris
+from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.dummy import DummyClassifier
 
 from sklearn import preprocessing
 
@@ -78,10 +81,12 @@ def main():
     y_train = df_treinamento[["Real"]].to_numpy().ravel()
     y_test  = df_validacao[["Real"]].to_numpy().ravel()
 
-    clf = RandomForestClassifier(n_estimators = 30)
     y_pred = clf.fit(X_train, y_train).predict(X_test)
-
-    print(sum(y_pred == y_test)/len(y_pred))
+    
+    
+    clf = KNeighborsClassifier(n_neighbors= 5)
+    print(classification_report(y_test,y_pred))
+    confusion_matrix(y_test,y_pred,labels = df_treinamento['Real'].unique())
     
 if __name__ == '__main__':
     main()
