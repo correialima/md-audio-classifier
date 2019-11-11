@@ -2,10 +2,14 @@
 
 ## Relatório 
 
-Daniel Pereira Cinalli - RA:
+Daniel Pereira Cinalli - RA: 11069711
+
 Rafael Correia de Lima - RA: 21004515
 
 ### 1. Introdução
+
+Neste projeto foi desenvolvido um classificador de arquivos de áudio, capaz de distinguir gravações de diferentes caracteres. 
+
 
 O projeto do classificador foi desenvolvido sobre uma base de dados gerada a partir das gravações dos próprios alunos da disciplina falando os caracteres escolhidos. Os caracteres escolhidos para a formação da 
 
