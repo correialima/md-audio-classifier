@@ -52,6 +52,8 @@ def main():
         sinal = train_set[train_set['class'] == c].iloc[0,0]
         signals[c] = sinal
         fft[c] = (np.fft.rfftfreq(len(sinal),d= 1),abs(np.fft.rfft(sinal)/len(sinal)))
+        
+    
     
     plot_signals(fft)
     plt.show()

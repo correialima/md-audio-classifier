@@ -53,7 +53,7 @@ def plot_fbank(fbank):
 
 def plot_mfccs(mfccs):
     fig, axes = plt.subplots(nrows=2, ncols=5, sharex=False,
-                             sharey=True, figsize=(15,5))
+                             sharey=True, figsize=(20,5))
     fig.suptitle('Mel Frequency Cepstrum Coefficients', size=16)
     i = 0
     for x in range(2):
@@ -74,13 +74,15 @@ def calc_fft(y,rate):
 def create_set(path):
     df = pd.DataFrame(columns = ['dados','source_file','class'])
     for file in sorted(os.listdir(path)):
-        data, fs  = librosa.load(path+file, None)
+        data, fs  = librosa.load(path+file, rate)
         for i, ini in zip(range(4),range(0, data.shape[0], fs*intervalo)):
-            dados = data[ini:(ini+fs*2)] / max(data[ini:(ini+fs*2)])
+            dados = data[ini:(ini+fs*2)] #/ max(abs(data[ini:(ini+fs*2)]))
             source = file
             character_class = file[i]
             df = df.append({'dados': dados, 'source_file': source, 'class': character_class}, ignore_index = True)
     return df
+
+
 
 train_set = create_set(train_path)    
 #val_set = create_set(val_path)
@@ -98,10 +100,21 @@ for c in classes:
     sinal = train_set[train_set['class'] == c].iloc[0,0]
     signals[c] = sinal
     fft[c] = calc_fft(sinal, rate)
-    
+    mfccs[c] = librosa.feature.mfcc(sinal)
     
 plot_signals(signals)
 plt.show()
 
 plot_fft(fft)
 plt.show()
+
+plot_mfccs(mfccs)
+plt.show()
+
+
+
+for c in classes:
+    plt.plot(fft[c][1],fft[c][0])
+    plt.suptitle('Fast Fourier Transforms para : ' + c)
+    plt.show()
+
