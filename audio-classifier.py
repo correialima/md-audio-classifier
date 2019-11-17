@@ -23,11 +23,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 
 from util import create_set, labeled_confusion_matrix
-
-# inputs e constantes
-PATH_TREINAMENTO = "./TREINAMENTO/"
-PATH_VALIDACAO = "./VALIDACAO/"
-
+from config import PATH_TREINAMENTO, PATH_VALIDACAO
 
 
 X_train, y_train = create_set(PATH_TREINAMENTO)
@@ -36,21 +32,12 @@ X_val, y_val = create_set(PATH_VALIDACAO)
 X_train = normalize(X_train, axis=0, norm='l2')
 X_val = normalize(X_val, axis=0, norm='l2')
 
-
-
 classificador = RandomForestClassifier(n_estimators=1000)
 classificador.fit(X_train, y_train)
-
-
-#classificador = KNeighborsClassifier(n_neighbors=3)
-#classificador.fit(X_train, y_train)
-
 
 # classificação final e avaliação dos resultados
 
 y_pred = classificador.predict(X_val)
-
-
 
 print(classification_report(y_val, y_pred))
 

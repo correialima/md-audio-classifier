@@ -15,12 +15,11 @@ from sklearn.svm import SVC, LinearSVC
 from sklearn.neural_network import MLPClassifier
 
 from util import create_set, labeled_confusion_matrix
-
-# inputs e constantes
-PATH_TREINAMENTO = "./TREINAMENTO/"
-PATH_VALIDACAO = "./VALIDACAO/"
+from config import PATH_TREINAMENTO, PATH_VALIDACAO
 
 def main():
+    
+    start = time.time()
     
     X_train, y_train = create_set(PATH_TREINAMENTO)
     X_val, y_val = create_set(PATH_VALIDACAO)
@@ -28,25 +27,38 @@ def main():
     X_train = normalize(X_train, axis=0, norm='l2')
     X_val = normalize(X_val, axis=0, norm='l2')
 
-    #teste_random_forest(X_train,y_train,X_val,y_val)
+    end = time.time()
+    
+    print(f"Tempo para ler arquivos e extrair features: {end-start} s")
+
+    teste_random_forest(X_train,y_train,X_val,y_val)
     #teste_kNeighbors(X_train,y_train,X_val,y_val)
     #teste_svc(X_train,y_train,X_val,y_val)
-    teste_MLP(X_train,y_train,X_val,y_val)
+    #teste_MLP(X_train,y_train,X_val,y_val)
+
+    
 
 def teste_MLP(X_train,y_train,X_val,y_val):
 
     classification_results = []    
     
-    activation_functions = ['identity', 'logistic', 'tanh', 'relu']
-    solvers = ['lbfgs','sgd','adam']
-    learning_rates = ['constant','invscaling','adaptive']
+    hidden_layer_sizess = [(100, ), (150, ), (200, ), (100, 20), (100, 50 ), (150, 20), (150, 50), (200, 20), (200, 50)]
+    activation_functions = ['tanh'] #'identity', 'logistic', 'tanh', 'relu'
+    solvers = ['lbfgs'] #'lbfgs','sgd','adam'
+    learning_rates = ['constant','invscaling','adaptive'] #'constant','invscaling','adaptive'
     
-    combinations = product(activation_functions,solvers,learning_rates)
+    combinations = product(
+        hidden_layer_sizess,
+        activation_functions,
+        solvers,
+        learning_rates
+        )
     
     
-    for af,sv,lr in combinations:
+    for hls, af, sv, lr in combinations:
         start = time.time()
         classificador = MLPClassifier(
+            hidden_layer_sizes = hls,
             solver = sv,
             learning_rate = lr,
             activation = af
@@ -56,7 +68,7 @@ def teste_MLP(X_train,y_train,X_val,y_val):
         end = time.time()
         time_elapsed = end-start
         new_result = (
-            af,sv,lr,
+            hls, af , sv, lr,
             classification_report(y_val, y_pred),
             labeled_confusion_matrix(y_val,y_pred),
             time_elapsed
@@ -64,10 +76,10 @@ def teste_MLP(X_train,y_train,X_val,y_val):
         classification_results.append(new_result)
     
     print("MLP:")
-    for af, sv, lr, cr, cm, t in classification_results:
+    for hls, af, sv, lr, cr, cm, t in classification_results:
         
-        print(f"Função de ativação: {af}, Solver: {sv}, Learning rate: {lr}")
-        print(f"Tempo para classificação: {t}")
+        print(f"Função de ativação: {af}, Solver: {sv}, Learning rate: {lr}, Hidden_layer: {hls}")
+        print(f"Tempo para classificação: {t} s")
         print(cr)
         print(cm)
         print('___________________________________________________')
@@ -107,7 +119,7 @@ def teste_svc(X_train,y_train,X_val,y_val):
     for k, g, s, cr, cm, t in classification_results:
         
         print(f"kernel: {k}, gamma: {g}, decision function shape: {s}")
-        print(f"Tempo para classificação: {t}")
+        print(f"Tempo para classificação: {t} s")
         print(cr)
         print(cm)
         print('___________________________________________________')
@@ -146,7 +158,7 @@ def teste_svc(X_train,y_train,X_val,y_val):
     for k, g, s, cr, cm, t in classification_results:
         
         print(f"kernel: {k}, gamma: {g}, decision function shape: {s}")
-        print(f"Tempo para classificação: {t}")
+        print(f"Tempo para classificação: {t} s")
         print(cr)
         print(cm)
         print('___________________________________________________')
@@ -185,22 +197,25 @@ def teste_random_forest(X_train,y_train,X_val,y_val):
     n_estimators = [100*i for i in range(5,20)]
     
     for n in n_estimators:
-
+        start = time.time()
         classificador = RandomForestClassifier(n_estimators=n)
         classificador.fit(X_train, y_train)
         y_pred = classificador.predict(X_val)
+        end = time.time()
+        time_elapsed = end-start
         new_result = (
             n,
             classification_report(y_val, y_pred),
-            labeled_confusion_matrix(y_val,y_pred)
-            
+            labeled_confusion_matrix(y_val,y_pred),
+            time_elapsed
         )
         classification_results.append(new_result)
     
     print("Random Forest:")
-    for n, cr, cm in classification_results:
+    for n, cr, cm, t in classification_results:
         
         print(f"Num de estimadores: {n}")
+        print(f"Tempo para classificação: {t} s")
         print(cr)
         print(cm)
         print('___________________________________________________')
