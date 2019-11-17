@@ -2,6 +2,7 @@
 import numpy as np
 from itertools import product
 import time
+import random
 
 # bibliotecas para classificação
 from sklearn.metrics import classification_report
@@ -15,9 +16,12 @@ from sklearn.svm import SVC, LinearSVC
 from sklearn.neural_network import MLPClassifier
 
 from util import create_set, labeled_confusion_matrix
-from config import PATH_TREINAMENTO, PATH_VALIDACAO
+from config import PATH_TREINAMENTO, PATH_VALIDACAO, SEED
 
 def main():
+    
+    random.seed(SEED)
+    np.random.seed(SEED)
     
     start = time.time()
     
@@ -194,7 +198,7 @@ def teste_kNeighbors(X_train,y_train,X_val,y_val):
 def teste_random_forest(X_train,y_train,X_val,y_val):
     
     classification_results = []    
-    n_estimators = [100*i for i in range(5,20)]
+    n_estimators = [i for i in range(10,100)]
     
     for n in n_estimators:
         start = time.time()

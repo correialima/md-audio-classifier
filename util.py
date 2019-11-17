@@ -9,17 +9,20 @@ from config import INTERVALO
 
 def extract_attributes(dados, fs):
     #_, dados = librosa.effects.hpss(y = dados)
-    dados, _ = librosa.effects.trim(y = dados)
+    #dados, _ = librosa.effects.trim(y = dados, top_db = 20)
     stft = np.abs(librosa.stft(dados))
     mfccs = np.mean(librosa.feature.mfcc(y = dados, sr = fs, n_mfcc = 13), axis = 1)
-    chroma = np.mean(librosa.feature.chroma_stft(S = stft, sr = fs), axis = 1)
+    #chroma = np.mean(librosa.feature.chroma_stft(S = stft, sr = fs), axis = 1)
     mel = np.mean(librosa.feature.melspectrogram(dados, sr = fs), axis = 1)
-    contrast = np.mean(librosa.feature.spectral_contrast(S = stft, sr = fs), axis = 1)
-    centroid = np.mean(librosa.feature.spectral_centroid(dados, S = stft))
-    zero_crossings = np.mean(librosa.feature.zero_crossing_rate(y = dados))
+    #contrast = np.mean(librosa.feature.spectral_contrast(S = stft, sr = fs), axis = 1)
+    #centroid = np.mean(librosa.feature.spectral_centroid(dados, S = stft))
+    #zero_crossings = np.mean(librosa.feature.zero_crossing_rate(y = dados))
     #tonnetz = np.mean(librosa.feature.tonnetz(y = librosa.effects.harmonic(dados), sr = fs), axis = 1)
     
-    att = np.hstack([mfccs, chroma, contrast, mel, centroid, zero_crossings])
+    att = np.hstack([
+        mfccs,
+        mel
+        ])
     return att
 
 def getAudioSegments(filename):
@@ -32,11 +35,17 @@ def getAudioSegments(filename):
         
     return dados_p_seg, fs
 
+def loadAudio(filename):
+    return librosa.load(filename, None)
+
+def getFilenames(path):
+    return sorted(os.listdir(path))    
+
 def create_set(path):
     X = []
     Y = []
     
-    for filename in sorted(os.listdir(path)):
+    for filename in getFilenames(path):
         dados_segmentados, fs  = getAudioSegments(path+filename)
         for i, dados in zip(range(4),dados_segmentados.values()):
             Y.append(filename[i])
