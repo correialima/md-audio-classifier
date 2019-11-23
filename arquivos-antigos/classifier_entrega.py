@@ -6,26 +6,26 @@ Daniel Pereira Cinalli - 11069711
 Rafael Correia de Lima - 21004515
 
 '''
-import matplotlib.pyplot as plt
+# bibliotecas para pré-processamento
+import pandas as pd
+import numpy as np
 import random
 import librosa
 import os
 
-# bibliotecas para pré-processamento
-import pandas as pd
-import numpy as np
-
 # bibliotecas para classificação
-from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.preprocessing import normalize
 
 # bibliotecas para avaliação e exibição dos resultados
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+import matplotlib.pyplot as plt
 
-
-PATH_TREINAMENTO = "./TREINAMENTO/"
-PATH_VALIDACAO = "./VALIDACAO/"
-PATH_TESTE = "./TESTE/"
+# defuu
+PATH_TREINAMENTO = "./treinamento/"
+PATH_VALIDACAO = "./validacao/"
+PATH_TESTE = "./teste/"
+INTERVALO = 2
 SEED = 1000
 
 def main():
@@ -39,7 +39,7 @@ def main():
     X_train = normalize(X_train, axis=0, norm='l2')
     X_val = normalize(X_val, axis=0, norm='l2')
     X_test = normalize(X_test, axis=0, norm='l2')
-
+    
     classificador = RandomForestClassifier(n_estimators = 75)
     classificador.fit(X_train, y_train)
 
@@ -49,7 +49,7 @@ def main():
     y_pred = classificador.predict(X_val)
 
     print(classification_report(y_val, y_pred))
-    print("Matriz de confusão")
+    print("Matriz de confusão\n")
     print(labeled_confusion_matrix(y_val,y_pred))
 
     # teste
@@ -60,8 +60,8 @@ def main():
     print("Matriz de confusão")
     print(labeled_confusion_matrix(y_test, y_pred))
 
+
 def extract_attributes(dados, fs):
-    stft = np.abs(librosa.stft(dados))
     mfccs = np.mean(librosa.feature.mfcc(y = dados, sr = fs, n_mfcc = 13), axis = 1)
     mel = np.mean(librosa.feature.melspectrogram(dados, sr = fs), axis = 1)
 
@@ -73,16 +73,11 @@ def extract_attributes(dados, fs):
 
 def getAudioSegments(filename):
     data, fs = librosa.load(filename, None)
-    duracao_total = data.shape[0]/fs
     dados_p_seg = {}
 
     for i, ini in enumerate(range(0, data.shape[0], fs * INTERVALO)):
         dados_p_seg[i] = data[ini:(ini + fs * 2)] / max(abs(data[ini:(ini + fs * 2)]))
-        
     return dados_p_seg, fs
-
-def loadAudio(filename):
-    return librosa.load(filename, None)
 
 def getFilenames(path):
     return sorted(os.listdir(path))    
