@@ -62,4 +62,12 @@ def labeled_confusion_matrix(y_val,y_pred):
     cm = pd.DataFrame(confusion_matrix(y_val,y_pred, labels = pred_labels), index = pred_labels, columns = pred_labels)
 
     return cm
+   
+   
+def rearrange(y, n):
+    """Recebe ndarray de chars e retorna lista de strings concatenando de n em n"""
+    y = y.reshape((len(y)//n, n))
+    return [''.join(row) for row in y]
+        
+    
     

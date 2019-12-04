@@ -22,7 +22,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.svm import SVC
 
-from util import create_set, labeled_confusion_matrix
+from util import create_set, labeled_confusion_matrix, rearrange
 from config import PATH_TREINAMENTO, PATH_VALIDACAO, PATH_TESTE, SEED
 
 def main():
@@ -45,9 +45,12 @@ def main():
     print("Validação")
     y_pred = classificador.predict(X_val)
     
+    y_val = rearrange(y_val, 4)
+    y_pred = rearrange(y_pred, 4)
+    
     print(classification_report(y_val, y_pred))
-    print("Matriz de confusão")
-    print(labeled_confusion_matrix(y_val,y_pred))
+    #print("Matriz de confusão")
+    #print(labeled_confusion_matrix(y_val,y_pred))
     
     '''
     # teste
