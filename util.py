@@ -5,7 +5,7 @@ import pandas as pd
 import os
 from sklearn.metrics import confusion_matrix
 
-from config import INTERVALO
+from config import INTERVALO, AUDIOS_POR_ARQUIVO
 
 def extract_attributes(dados, fs):
     #_, dados = librosa.effects.hpss(y = dados)
@@ -47,7 +47,7 @@ def create_set(path):
     
     for filename in getFilenames(path):
         dados_segmentados, fs  = getAudioSegments(path+filename)
-        for i, dados in zip(range(4),dados_segmentados.values()):
+        for i, dados in zip(range(AUDIOS_POR_ARQUIVO),dados_segmentados.values()):
             Y.append(filename[i])
             att = extract_attributes(dados, fs)
             X.append(att)
