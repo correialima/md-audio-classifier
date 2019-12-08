@@ -10,7 +10,7 @@ from config import INTERVALO, AUDIOS_POR_ARQUIVO
 def extract_attributes(dados, fs):
     #_, dados = librosa.effects.hpss(y = dados)
     #dados, _ = librosa.effects.trim(y = dados, top_db = 20)
-    stft = np.abs(librosa.stft(dados))
+    #stft = np.abs(librosa.stft(dados))
     mfccs = np.mean(librosa.feature.mfcc(y = dados, sr = fs, n_mfcc = 13), axis = 1)
     #chroma = np.mean(librosa.feature.chroma_stft(S = stft, sr = fs), axis = 1)
     mel = np.mean(librosa.feature.melspectrogram(dados, sr = fs), axis = 1)
@@ -27,7 +27,7 @@ def extract_attributes(dados, fs):
 
 def getAudioSegments(filename):
     data, fs = librosa.load(filename, None)
-    duracao_total = data.shape[0]/fs
+    #duracao_total = data.shape[0]/fs
     dados_p_seg = {}
 
     for i, ini in enumerate(range(0, data.shape[0], fs * INTERVALO)):
